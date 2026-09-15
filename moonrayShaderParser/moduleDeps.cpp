@@ -14,7 +14,9 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader) {
     // List of direct dependencies for this library.
     const std::vector<TfToken> reqs = {
         TfToken("ar"),
+#if PXR_VERSION < 2508
         TfToken("ndr"),
+#endif
         TfToken("sdr")
     };
     TfScriptModuleLoader::GetInstance().

@@ -4,27 +4,28 @@
 #ifndef PXR_USD_PLUGIN_MOONRAY_PARSER_PLUGIN_H
 #define PXR_USD_PLUGIN_MOONRAY_PARSER_PLUGIN_H
 
-#include "pxr/pxr.h"
+#include "../sdrCompat.h"
 #include "pxr/base/tf/token.h"
 
-#include "pxr/usd/ndr/declare.h"
-#include "pxr/usd/ndr/parserPlugin.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-class NdrNode;
-class NdrNodeDiscoveryResult;
 
-class MoonrayParserPlugin : public NdrParserPlugin {
+class MoonrayParserPlugin : public moonray_sdr::ParserPlugin {
 public:
     MoonrayParserPlugin() = default;
 
     ~MoonrayParserPlugin() override = default;
 
-    NdrNodeUniquePtr Parse(const NdrNodeDiscoveryResult &discoveryResult)
+    moonray_sdr::NodeUniquePtr
+#if PXR_VERSION >= 2508
+    ParseShaderNode(const moonray_sdr::NodeDiscoveryResult &discoveryResult)
+#else
+    Parse(const moonray_sdr::NodeDiscoveryResult &discoveryResult)
+#endif
         override;
 
-    const NdrTokenVec &GetDiscoveryTypes() const override;
+    const moonray_sdr::TokenVec &GetDiscoveryTypes() const override;
 
     const TfToken &GetSourceType() const override;
 

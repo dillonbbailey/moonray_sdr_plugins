@@ -30,12 +30,16 @@ void dumpProperty(SdrShaderPropertyConstPtr prop)
         std::cout << "** BAD PROPERTY **" << std::endl;
         return;
     }
+#if PXR_VERSION >= 2508
+    SdfValueTypeName sdfTypeName = prop->GetTypeAsSdfType().GetSdfType();
+#else
     SdfValueTypeName sdfTypeName;
     TfToken backupType;
     std::tie<SdfValueTypeName,TfToken>(sdfTypeName,backupType) = prop->GetTypeAsSdfType();
+#endif
     TfToken sdfType = sdfTypeName.GetAsToken();
     TfToken propType = prop->GetType();
-    const NdrOptionVec& options = prop->GetOptions();
+    const auto& options = prop->GetOptions();
     if (!options.empty()) propType = TfToken("enum");
 
     std::cout << TABSTR;
@@ -55,7 +59,7 @@ void dumpProperty(SdrShaderPropertyConstPtr prop)
         }
         std::cout << std::endl;
     }
-    const NdrTokenMap&  metadata = prop->GetMetadata();
+    const auto&  metadata = prop->GetMetadata();
     for (const auto& item : metadata) {
         std::cout << TABSTR << TABSTR << "* " << item.first << " = " << item.second << std::endl;
     }
@@ -64,7 +68,11 @@ void dumpProperty(SdrShaderPropertyConstPtr prop)
 void dumpNode(SdrShaderNodeConstPtr node)
 {
     std::cout << "Identifier: " << node->GetIdentifier() << std::endl
+#if PXR_VERSION >= 2508
+              << "Version:    " << node->GetShaderVersion().GetString() << std::endl
+#else
               << "Version:    " << node->GetVersion().GetString() << std::endl
+#endif
               << "Name:       " << node->GetName() << std::endl
               << "Family:     " << node->GetFamily() << std::endl
               << "Context:    " << node->GetContext() << std::endl
@@ -80,17 +88,25 @@ void dumpNode(SdrShaderNodeConstPtr node)
               << "IsValid:    " << node->IsValid() << std::endl;
 
     std::cout << "INPUTS:" << std::endl;
-    const NdrTokenVec& inputNames = node->GetInputNames();
+#if PXR_VERSION >= 2508
+    const auto& inputNames = node->GetShaderInputNames();
+#else
+    const auto& inputNames = node->GetInputNames();
+#endif
     for (const TfToken& name : inputNames) {
         dumpProperty(node->GetShaderInput(name));
     }
     std::cout << "OUTPUTS:" << std::endl;
-    const NdrTokenVec& outputNames = node->GetOutputNames();
+#if PXR_VERSION >= 2508
+    const auto& outputNames = node->GetShaderOutputNames();
+#else
+    const auto& outputNames = node->GetOutputNames();
+#endif
     for (const TfToken& name : outputNames) {
         dumpProperty(node->GetShaderOutput(name));
     }
     std::cout << "METADATA:" << std::endl;
-    const NdrTokenMap& metadata = node->GetMetadata();
+    const auto& metadata = node->GetMetadata();
     for (const auto& item : metadata) {
         std::cout << TABSTR << "* " << item.first << " = " << item.second << std::endl;
     }
@@ -109,4 +125,3 @@ int main(int argc, char *argv[])
     }
     return 0;
 }
-

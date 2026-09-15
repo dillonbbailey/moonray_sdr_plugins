@@ -18,5 +18,15 @@ endif()
 
 find_package(Python REQUIRED COMPONENTS Development)
 
+if(PXR_VERSION VERSION_GREATER_EQUAL 2508)
+    set(MOONRAY_SDR_LEGACY_LIBRARY "")
+    set(MOONRAY_SDR_DISCOVERY_BASE SdrDiscoveryPlugin)
+    set(MOONRAY_SDR_PARSER_BASE SdrParserPlugin)
+else()
+    set(MOONRAY_SDR_LEGACY_LIBRARY ndr)
+    set(MOONRAY_SDR_DISCOVERY_BASE NdrDiscoveryPlugin)
+    set(MOONRAY_SDR_PARSER_BASE NdrParserPlugin)
+endif()
+
 add_subdirectory(moonrayShaderDiscovery)
 add_subdirectory(moonrayShaderParser)
