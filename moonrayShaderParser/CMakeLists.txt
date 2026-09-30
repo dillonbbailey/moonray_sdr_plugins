@@ -13,8 +13,12 @@ set_target_properties(${component} PROPERTIES PREFIX "")
 target_sources(${component}
     PRIVATE
         parserPlugin.cpp
-        moduleDeps.cpp
 )
+
+# moduleDeps.cpp is not built: it registers a Python module
+# (pxr.MoonrayShader*) that does not exist, which USD 25.x then fails to
+# import on every load. USD only generates moduleDeps.cpp for libraries that
+# have Python bindings.
 
 if(IsDarwinPlatform)
     target_compile_features(${component} PRIVATE cxx_std_17)
