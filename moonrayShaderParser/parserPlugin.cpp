@@ -57,8 +57,14 @@ getSdrTypeAndSize(const std::string& attrType)
     if (attrType == "String" || attrType == "StringVector") {
         return std::pair<TfToken,size_t>(SdrPropertyTypes->String,0);
     }
-    if (attrType == "Rgb" || attrType == "RgbVector") {
+    if (attrType == "Rgb") {
         return std::pair<TfToken,size_t>(SdrPropertyTypes->Float,3);
+    }
+    if (attrType == "RgbVector") {
+        // A dynamic array of colors: Sdr "color" + IsDynamicArray resolves to
+        // color3f[]. Float with size 3 resolves to a single color3f, which does
+        // not match the VtArray<GfVec3f> default (Sdr warns on every such node).
+        return std::pair<TfToken,size_t>(SdrPropertyTypes->Color,0);
     }
     if (attrType == "Rgba" || attrType == "RgbaVector") {
         return std::pair<TfToken,size_t>(SdrPropertyTypes->Float,4);
